@@ -32,6 +32,5 @@ The project consists of the following files:
     * Map port `8501` of the container to port `8501` on your host machine, allowing you to access the Streamlit application in your browser.
     * It assumes your `HF_TOKEN` is in the `.env` file, which is copied into the container during the build process.
     ```
-    
 4.  **Access the application:**
     Open your web browser and go to `http://localhost:8501`.
