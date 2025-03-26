@@ -9,4 +9,4 @@ COPY . .
 
 RUN pip install python-dotenv
 
-CMD ["sh", "-c", "python -m dotenv -c . load && streamlit run chatbot.py"]
+CMD ["streamlit", "run", "script3.py"]
