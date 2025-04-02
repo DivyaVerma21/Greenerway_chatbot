@@ -77,11 +77,25 @@ def main():
     for message in st.session_state.messages:
         st.chat_message(message['role']).markdown(message['content'])
 
-    prompt = st.chat_input("Pass your prompt here")
+    prompt = st.chat_input("Hi :) , I am Greenerway Assistant, ask me about Greenerway")
 
     if prompt:
         st.chat_message('user').markdown(prompt)
         st.session_state.messages.append({'role': 'user', 'content': prompt})
+
+        # Redirect logic for specific user queries
+        if "bess size calculator" in prompt.lower():
+            st.markdown("[Go to BESS Calculator](https://www.greenerway.no/calculator)")
+            return
+        elif "schedule of day" in prompt.lower():
+            st.markdown("[Go to Scheduler App](https://scheduler-savings.streamlit.app/)")
+            return
+        elif "ems" in prompt.lower():
+            st.markdown("[Go to EMS Dashboard](https://ems.greenerway.services/dashboard/62727b89-347c-40b0-b746-0f06ec913894)")
+            return
+        elif "spot prices" in prompt.lower():
+            st.markdown("[Check Spot Prices](https://www.hvakosterstrommen.no/)")
+            return
 
         CUSTOM_PROMPT_TEMPLATE = """
             Use the pieces of information provided in the context to answer user's question.
