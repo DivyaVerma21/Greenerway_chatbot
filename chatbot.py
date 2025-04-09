@@ -6,6 +6,8 @@ from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import PromptTemplate
 from langchain_huggingface import HuggingFaceEndpoint
 from dotenv import load_dotenv, find_dotenv
+import time
+import re
 
 # Load environment variables
 load_dotenv(find_dotenv())
@@ -17,7 +19,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS for forced dark mode with fluorescent green chatbot responses
+# Custom CSS
 st.markdown("""
     <style>
         body, .stApp {
@@ -25,18 +27,18 @@ st.markdown("""
             color: white !important;
             font-family: 'Poppins', sans-serif;
         }
-        .stChatMessage {
-            border-radius: 8px;
-            padding: 10px;
-        }
         .stChatMessage.user {
             background-color: #BCFA8E !important;
             color: black !important;
+            border-radius: 8px;
+            padding: 10px;
         }
         .stChatMessage.assistant {
-            background-color: #112102 !important;
-            color: #39FF14 !important; /* Fluorescent Green */
-            font-weight: bold;
+            background-color: #1e1e1e !important;
+            color: white !important;
+            font-weight: normal !important;
+            border-radius: 8px;
+            padding: 10px;
         }
         .stButton>button {
             background-color: #BCFA8E !important;
@@ -72,8 +74,26 @@ def load_llm(huggingface_repo_id, HF_TOKEN):
         model_kwargs={"token": HF_TOKEN, "max_length": "512"}
     )
 
+def convert_urls_to_links(text):
+    # Finds all http/https/www URLs and converts to markdown link format
+    url_pattern = r"(https?://[^\s]+|www\.[^\s]+)"
+    return re.sub(url_pattern, lambda m: f"[{m.group(0)}]({m.group(0) if m.group(0).startswith('http') else 'https://' + m.group(0)})", text)
 
 def main():
+    # Sidebar with example questions
+    with st.sidebar:
+        st.header("🤖 How can I help?")
+        st.markdown("""
+        Try asking me things like:
+        - "What does Greenerway do?"
+        - "How to use the BESS size calculator?"
+        - "Show me today's schedule"
+        - "Take me to EMS Dashboard?"
+        - "Where can I find spot prices?"
+
+        Or type your own question!
+        """)
+
     # Display logo
     image_path = os.path.join(os.path.dirname(__file__), "logo-signal.9e6e0a8c.webp")
     st.image(image_path, width=100)
@@ -82,6 +102,10 @@ def main():
 
     if 'messages' not in st.session_state:
         st.session_state.messages = []
+
+    # Show welcome message if no chat history
+    if len(st.session_state.messages) == 0:
+        st.markdown('<p class="stChatMessage assistant">Hi 👋 I\'m your Greenerway Assistant.</p>', unsafe_allow_html=True)
 
     for message in st.session_state.messages:
         role = message['role']
@@ -97,17 +121,16 @@ def main():
         st.chat_message('user').markdown(prompt)
         st.session_state.messages.append({'role': 'user', 'content': prompt})
 
-        # Redirect logic for specific user queries
+        # Redirect logic for specific queries
         if any(keyword in prompt.lower() for keyword in
-               ["bess size calculator", "bess calculator", "bess size", "bess"]):
+               ["bess size calculator", "bess calculator"]):
             st.markdown("[Go to BESS Calculator](https://www.greenerway.no/calculator)")
             return
         elif any(keyword in prompt.lower() for keyword in ["schedule of day", "scheduler", "schedule", "plan"]):
             st.markdown("[Go to Scheduler App](https://scheduler-savings.streamlit.app/)")
             return
-        elif "ems" in prompt.lower():
-            st.markdown(
-                "[Go to EMS Dashboard](https://ems.greenerway.services/sites)")
+        elif "ems dashboard" in prompt.lower():
+            st.markdown("[Go to EMS Dashboard](https://ems.greenerway.services/sites)")
             return
         elif "spot prices" in prompt.lower():
             st.markdown("[Check Spot Prices](https://www.hvakosterstrommen.no/)")
@@ -145,8 +168,14 @@ def main():
             response = qa_chain.invoke({'query': prompt})
             result = response["result"]
 
-            # Apply fluorescent green style manually to chatbot responses
-            st.markdown(f'<p class="stChatMessage assistant">{result}</p>', unsafe_allow_html=True)
+            # Typing effect
+            placeholder = st.empty()
+            display_text = ""
+            for char in result:
+                display_text += char
+                converted_text = convert_urls_to_links(display_text)
+                placeholder.markdown(f'<p class="stChatMessage assistant">{converted_text}</p>', unsafe_allow_html=True)
+                time.sleep(0.01)
 
             st.session_state.messages.append({'role': 'assistant', 'content': result})
 
