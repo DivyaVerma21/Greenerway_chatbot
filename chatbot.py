@@ -98,13 +98,13 @@ def main():
         st.session_state.messages.append({'role': 'user', 'content': prompt})
 
         # Redirect logic for specific user queries
-        if "bess size calculator" in prompt.lower():
+        if "bess size calculator" or "bess calculator" or "BESS Calculator" or "BESS Size Calculator" in prompt.lower():
             st.markdown("[Go to BESS Calculator](https://www.greenerway.no/calculator)")
             return
-        elif "schedule of day" in prompt.lower():
+        elif "schedule of day" or "scheduler" or "SCHEDULER" in prompt.lower():
             st.markdown("[Go to Scheduler App](https://scheduler-savings.streamlit.app/)")
             return
-        elif "ems" in prompt.lower():
+        elif "ems" or "EMS" in prompt.lower():
             st.markdown(
                 "[Go to EMS Dashboard](https://ems.greenerway.services/dashboard/62727b89-347c-40b0-b746-0f06ec913894)")
             return
