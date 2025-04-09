@@ -70,6 +70,7 @@ def set_custom_prompt(custom_prompt_template):
 def load_llm(huggingface_repo_id, HF_TOKEN):
     return HuggingFaceEndpoint(
         repo_id=huggingface_repo_id,
+        task="text-generation",
         temperature=0.5,
         model_kwargs={"token": HF_TOKEN, "max_length": "512"}
     )
@@ -82,7 +83,7 @@ def convert_urls_to_links(text):
 def main():
     # Sidebar with example questions
     with st.sidebar:
-        st.header("🤖 How can I help?")
+        st.header(" How can I help?")
         st.markdown("""
         Try asking me things like:
         - "What does Greenerway do?"
