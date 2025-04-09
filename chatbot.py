@@ -107,7 +107,7 @@ def main():
             return
         elif "ems" in prompt.lower():
             st.markdown(
-                "[Go to EMS Dashboard](https://ems.greenerway.services/dashboard/62727b89-347c-40b0-b746-0f06ec913894)")
+                "[Go to EMS Dashboard](https://ems.greenerway.services/sites)")
             return
         elif "spot prices" in prompt.lower():
             st.markdown("[Check Spot Prices](https://www.hvakosterstrommen.no/)")
