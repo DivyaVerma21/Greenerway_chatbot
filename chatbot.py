@@ -72,7 +72,8 @@ def load_llm(huggingface_repo_id, HF_TOKEN):
         repo_id=huggingface_repo_id,
         task="text-generation",
         temperature=0.5,
-        model_kwargs={"token": HF_TOKEN, "max_length": "512"}
+        huggingfacehub_api_token=HF_TOKEN,
+        model_kwargs={"max_length": 512}
     )
 
 def convert_urls_to_links(text):
